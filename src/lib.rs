@@ -55,6 +55,7 @@ pub mod ctrl1xl;
 pub mod ctrl2g;
 pub mod ctrl3c;
 pub mod ctrl7g;
+pub mod ctrl8xl;
 pub mod ctrl9xl;
 pub mod fifo;
 pub mod fifoctrl;
@@ -64,6 +65,7 @@ use ctrl1xl::Ctrl1Xl;
 use ctrl2g::Ctrl2G;
 use ctrl3c::Ctrl3C;
 use ctrl7g::Ctrl7G;
+use ctrl8xl::Ctrl8Xl;
 use ctrl9xl::Ctrl9Xl;
 use fifoctrl::FifoCtrl;
 use fifostatus::FifoStatus;
@@ -104,6 +106,7 @@ pub struct Ism330Dhcx {
     pub ctrl2g: Ctrl2G,
     pub ctrl7g: Ctrl7G,
     pub ctrl3c: Ctrl3C,
+    pub ctrl8xl: Ctrl8Xl,
     pub ctrl9xl: Ctrl9Xl,
     pub fifoctrl: FifoCtrl,
     pub fifostatus: FifoStatus,
@@ -128,6 +131,7 @@ impl Ism330Dhcx {
         let ctrl2g = Ctrl2G::new(registers[1], address);
         let ctrl3c = Ctrl3C::new(registers[2], address);
         let ctrl7g = Ctrl7G::new(registers[6], address);
+        let ctrl8xl = Ctrl8Xl::new(registers[7], address);
         let ctrl9xl = Ctrl9Xl::new(registers[8], address);
         let fifoctrl = FifoCtrl::new(registers[9..13].try_into().unwrap(), address);
         let fifostatus = FifoStatus::new(address);
@@ -138,6 +142,7 @@ impl Ism330Dhcx {
             ctrl2g,
             ctrl3c,
             ctrl7g,
+            ctrl8xl,
             ctrl9xl,
             fifoctrl,
             fifostatus,
