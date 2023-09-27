@@ -49,17 +49,17 @@ pub const G_HM_MODE: u8 = 7;
 pub const HP_EN_G: u8 = 6;
 
 const HPM_G_MASK: u8 = 0b11;
-const HPM_G_OFFSET: u8 = 3;
+const HPM_G_OFFSET: u8 = 4;
 /// Gyroscope digital HP filter cutoff selection.
 ///
 /// Default: 00
 #[allow(non_camel_case_types)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub enum Hpm_g {
-    Hpmg16,  // ±250 mHz
-    Hpmg65,  // ±500 mHz
-    Hpmg260, // ±1000 mHz
-    Hpmg104, // ±4000 Hz
+    Hpmg16,  // 16 mHz
+    Hpmg65,  // 65 mHz
+    Hpmg260, // 260 mHz
+    Hpmg104, // 1.04 Hz
 }
 
 /// Selects how to enable and disable the OIS chain, after first configuration and enabling through SPI2.
@@ -89,10 +89,10 @@ impl Ctrl7G {
 
     pub fn hpm_g(&self) -> f32 {
         match (self.value >> HPM_G_OFFSET) & HPM_G_MASK {
-            0 => 250.0,
-            1 => 500.0,
-            2 => 1000.0,
-            3 => 4000.0,
+            0 => 16.0,
+            1 => 65.0,
+            2 => 260.0,
+            3 => 1040.0,
             _ => panic!("Unreachable"),
         }
     }
@@ -116,6 +116,19 @@ impl Ctrl7G {
     {
         self.value &= !(1 << G_HM_MODE);
         self.value |= (value as u8) << G_HM_MODE;
+        self.write(i2c, self.address, ADDR, self.value)
+    }
+
+    pub fn hp_en_g(&mut self) -> bool {
+        self.value & (1 << HP_EN_G) != 0
+    }
+
+    pub fn set_hp_en_g<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
+    where
+        I2C: Write,
+    {
+        self.value &= !(1 << HP_EN_G);
+        self.value |= (value as u8) << HP_EN_G;
         self.write(i2c, self.address, ADDR, self.value)
     }
 
